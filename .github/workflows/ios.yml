@@ -7,12 +7,15 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-      - run: flutter create --platforms=android,ios --project-name batman_mobile .
+      - name: Generate scaffolding
+        run: |
+          flutter create --platforms=android,ios --project-name batman_mobile .
+          rm -f test/widget_test.dart
       - run: python3 tools/configure_platforms.py
       - run: flutter pub get
       - run: flutter test

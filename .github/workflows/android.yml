@@ -18,10 +18,13 @@ jobs:
         run: |
           flutter create --platforms=android,ios --project-name batman_mobile .
           rm -f test/widget_test.dart
-      - name: Apply microphone and speech permissions
+      - name: Apply permissions (mic, notifications, local network)
         run: python3 tools/configure_platforms.py
       - name: Install dependencies
         run: flutter pub get
+      - name: Analyze (lists exact errors with line numbers)
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        continue-on-error: true
       - name: Run tests
         run: flutter test
       - name: Build Android installable APK (testing)

@@ -1,7 +1,7 @@
 name: batman_mobile
 publish_to: none
-description: Asistente móvil con voz, memoria privada y rutinas autorizadas.
-version: 0.1.0+1
+description: Asistente móvil BATMAN con IA, hábitos aprendidos, notificaciones y control remoto del PC.
+version: 1.0.0+2
 environment:
   sdk: '>=3.4.0 <4.0.0'
 dependencies:
@@ -13,6 +13,7 @@ dependencies:
   flutter_local_notifications: ^19.0.0
   timezone: ^0.10.0
   url_launcher: ^6.3.1
+  http: ^1.2.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
