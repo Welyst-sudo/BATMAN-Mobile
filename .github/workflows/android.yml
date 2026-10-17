@@ -14,8 +14,10 @@ jobs:
         with:
           channel: stable
           cache: true
-      - name: Generate Android and iOS native scaffolding
-        run: flutter create --platforms=android,ios --project-name batman_mobile .
+         - name: Generate Android and iOS native scaffolding
+     run: |
+       flutter create --platforms=android,ios --project-name batman_mobile .
+       rm -f test/widget_test.dart
       - name: Apply microphone and speech permissions
         run: python3 tools/configure_platforms.py
       - name: Install dependencies
