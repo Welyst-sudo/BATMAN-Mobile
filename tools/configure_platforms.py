@@ -28,3 +28,36 @@ if plist.exists():
     if 'NSSpeechRecognitionUsageDescription' not in text:
         text = text.replace('</dict>', '    <key>NSMicrophoneUsageDescription</key>\n    <string>BATMAN necesita el micrófono para escuchar tus instrucciones cuando lo actives.</string>\n    <key>NSSpeechRecognitionUsageDescription</key>\n    <string>BATMAN convierte tus instrucciones habladas en texto.</string>\n</dict>', 1)
         plist.write_text(text, encoding='utf-8')
+
+
+# --- Desugaring: flutter_local_notifications lo exige para compilar en Android ---
+import re
+
+DESUGAR_VERSION = '2.1.4'
+done = False
+
+kts = Path('android/app/build.gradle.kts')
+groovy = Path('android/app/build.gradle')
+
+if kts.exists():
+    text = kts.read_text(encoding='utf-8')
+    if 'isCoreLibraryDesugaringEnabled' not in text:
+        if re.search(r'compileOptions\s*\{', text):
+            text = re.sub(r'(compileOptions\s*\{)', r'\1\n        isCoreLibraryDesugaringEnabled = true', text, count=1)
+        else:
+            text = re.sub(r'(android\s*\{)', r'\1\n    compileOptions {\n        isCoreLibraryDesugaringEnabled = true\n    }', text, count=1)
+        text += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:%s")\n}\n' % DESUGAR_VERSION
+        kts.write_text(text, encoding='utf-8')
+    done = True
+elif groovy.exists():
+    text = groovy.read_text(encoding='utf-8')
+    if 'coreLibraryDesugaringEnabled' not in text:
+        if re.search(r'compileOptions\s*\{', text):
+            text = re.sub(r'(compileOptions\s*\{)', r'\1\n        coreLibraryDesugaringEnabled true', text, count=1)
+        else:
+            text = re.sub(r'(android\s*\{)', r'\1\n    compileOptions {\n        coreLibraryDesugaringEnabled true\n    }', text, count=1)
+        text += "\ndependencies {\n    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:%s'\n}\n" % DESUGAR_VERSION
+        groovy.write_text(text, encoding='utf-8')
+    done = True
+
+print('Desugaring configurado' if done else 'AVISO: no encontre build.gradle de la app')
