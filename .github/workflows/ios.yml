@@ -1,0 +1,20 @@
+name: BATMAN iOS Build Check (not installable)
+on:
+  workflow_dispatch:
+jobs:
+  ios:
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter create --platforms=android,ios --project-name batman_mobile .
+      - run: python3 tools/configure_platforms.py
+      - run: flutter pub get
+      - run: flutter test
+      - name: Compile iOS without signing
+        run: flutter build ios --debug --no-codesign
